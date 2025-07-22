@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 4eb5f342f5bc4f24f88cc7468db1c012
+=======
+guid: 276a0d1b21e9e36449d081e60d9b2e99
+>>>>>>> hyun
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
