@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using TMPro;
+using UnityEngine.Splines;
+
 
 public class RacingGameManager : MonoBehaviour
 {
@@ -18,6 +20,8 @@ public class RacingGameManager : MonoBehaviour
     public SplineBotController[] bots; // 여러 봇을 Inspector에서 연결
     public int totalLaps = 3;          // 총 랩 수
     public MeshRenderer[] startLights; // Inspector에서 3개의 라이트 오브젝트 연결
+
+    public SplineAnimate splineAnimator; // 스플라인 애니메이터 (Inspector에서 연결)
 
     private int currentLap = 0;
     private bool raceStarted = false;
@@ -85,6 +89,7 @@ public class RacingGameManager : MonoBehaviour
 
     void StartRace()
     {
+        splineAnimator.Play(); // 스플라인 애니메이션 시작
         raceStarted = true;
         currentLap = 1;
         player.SetActive(true);
