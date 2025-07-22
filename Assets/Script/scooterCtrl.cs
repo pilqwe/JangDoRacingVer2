@@ -15,6 +15,7 @@ public class scooterCtrl : MonoBehaviour
     public float driftForce = 15f;         // 드리프트 힘
     public float driftGaugeRate = 1f;      // 게이지 충전 속도
     public float maxDriftGauge = 100f;     // 최대 드리프트 게이지
+    public ParticleSystem[] driftEffects;  // 드리프트 파티클 효과
 
     [Header("부스터 시스템")]
     public float boostSpeed = 25f;         // 최대 부스터 속도
@@ -263,6 +264,57 @@ public class scooterCtrl : MonoBehaviour
             driftDirection = transform.right * Mathf.Sign(steerInput);
 
             Debug.Log("🏎️ 드리프트 시작!");
+            
+            // 드리프트 이펙트 활성화 (디버그 추가)
+            Debug.Log($"🎯 드리프트 이펙트 디버그 시작:");
+            Debug.Log($"   - driftEffects == null? {driftEffects == null}");
+            
+            if (driftEffects != null && driftEffects.Length > 0)
+            {
+                Debug.Log($"   - 배열 길이: {driftEffects.Length}");
+                
+                for (int i = 0; i < driftEffects.Length; i++)
+                {
+                    Debug.Log($"🔍 드리프트 이펙트 [{i}] 확인:");
+                    
+                    if (driftEffects[i] != null)
+                    {
+                        Debug.Log($"   ✅ 이펙트 이름: {driftEffects[i].name}");
+                        Debug.Log($"   - GameObject 활성화: {driftEffects[i].gameObject.activeInHierarchy}");
+                        Debug.Log($"   - ParticleSystem 활성화: {driftEffects[i].gameObject.activeSelf}");
+                        Debug.Log($"   - 현재 재생중: {driftEffects[i].isPlaying}");
+                        
+                        // 파티클 재생
+                        driftEffects[i].Play();
+                        
+                        // 재생 후 상태 확인
+                        Debug.Log($"   - Play() 호출 후 재생중: {driftEffects[i].isPlaying}");
+                        
+                        if (!driftEffects[i].isPlaying)
+                        {
+                            Debug.LogError($"❌ 드리프트 이펙트 [{i}] 재생 실패!");
+                            Debug.LogError($"   파티클 설정 확인 필요:");
+                            Debug.LogError($"   - Emission Rate over Time > 0");
+                            Debug.LogError($"   - Start Lifetime > 0");
+                            Debug.LogError($"   - Max Particles > 0");
+                            Debug.LogError($"   - Play On Awake가 체크 해제되어 있는지");
+                        }
+                        else
+                        {
+                            Debug.Log($"✅ 드리프트 이펙트 [{i}] 재생 성공!");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"⚠️ 드리프트 이펙트 [{i}]이 null입니다!");
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError("❌ driftEffects 배열이 null이거나 비어있습니다!");
+                Debug.LogError("💡 Inspector에서 Drift Effects 배열 크기를 설정하고 파티클을 할당하세요!");
+            }
         }
         else if (!driftInput || Mathf.Abs(steerInput) < 0.15f || currentSpeed < 1.5f)
         {
@@ -270,6 +322,19 @@ public class scooterCtrl : MonoBehaviour
             if (isDrifting)
             {
                 Debug.Log("🏁 드리프트 종료!");
+                
+                // 드리프트 이펙트 비활성화
+                if (driftEffects != null && driftEffects.Length > 0)
+                {
+                    for (int i = 0; i < driftEffects.Length; i++)
+                    {
+                        if (driftEffects[i] != null)
+                        {
+                            driftEffects[i].Stop();
+                            Debug.Log($"🛑 드리프트 이펙트 [{i}] 정지: {driftEffects[i].name}");
+                        }
+                    }
+                }
             }
             isDrifting = false;
         }
