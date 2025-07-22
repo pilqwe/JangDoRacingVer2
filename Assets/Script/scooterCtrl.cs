@@ -58,14 +58,29 @@ public class scooterCtrl : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
 
-        // CharacterController가 없으면 추가
+        // CharacterController가 없으면 경고 메시지만 출력
         if (controller == null)
         {
-            controller = gameObject.AddComponent<CharacterController>();
-            controller.radius = 0.5f;
-            controller.height = 1.8f;
-            controller.center = new Vector3(0, 0.9f, 0);
+            Debug.LogError("⚠️ CharacterController가 없습니다! Inspector에서 수동으로 추가해주세요.");
+            Debug.LogError("📋 방법: GameObject 선택 → Add Component → Character Controller");
+            return;
         }
+
+        // 기존 controller가 있는 경우에만 설정
+        SetupController();
+    }
+
+    private void SetupController()
+    {
+        if (controller == null) return;
+
+        // CharacterController 설정 (height/radius 먼저, stepOffset 마지막)
+        controller.radius = 0.5f;
+        controller.height = 1.8f;
+        controller.center = new Vector3(0, 0.9f, 0);
+        controller.stepOffset = 0.1f; // 안전한 값으로 고정
+
+        Debug.Log($"CharacterController 설정 완료 - Height: {controller.height}, Radius: {controller.radius}, StepOffset: {controller.stepOffset}");
 
         velocity = Vector3.zero;
         currentSpeed = 0f;
@@ -76,6 +91,12 @@ public class scooterCtrl : MonoBehaviour
 
     void Update()
     {
+        // CharacterController가 없거나 비활성화된 경우 처리하지 않음
+        if (controller == null || !controller.enabled)
+        {
+            return;
+        }
+
         HandleInput();
         HandleDrift();
         HandleBoost();
@@ -106,6 +127,12 @@ public class scooterCtrl : MonoBehaviour
 
     void HandleMovement()
     {
+        // CharacterController가 없거나 비활성화된 경우 리턴
+        if (controller == null || !controller.enabled)
+        {
+            return;
+        }
+
         // 지면 체크
         isGrounded = controller.isGrounded;
 
@@ -194,7 +221,14 @@ public class scooterCtrl : MonoBehaviour
 
         // 최종 이동
         Vector3 finalMove = move + Vector3.up * velocity.y;
-        controller.Move(finalMove * Time.deltaTime);
+        if (controller != null && controller.enabled)
+        {
+            controller.Move(finalMove * Time.deltaTime);
+        }
+        else
+        {
+            Debug.LogWarning("CharacterController가 비활성화 상태에서 Move가 호출될 뻔 했습니다.");
+        }
     }
 
     void HandleAudio()
@@ -243,9 +277,9 @@ public class scooterCtrl : MonoBehaviour
         // 드리프트 게이지 업데이트
         if (isDrifting)
         {
-            // 드리프트 중: 게이지 충전
+            // 드리프트 중: 게이지 충전 (3배 빠르게)
             float chargeRate = driftGaugeRate * Mathf.Abs(steerInput) * (currentSpeed / maxSpeed);
-            driftGauge += chargeRate * Time.deltaTime * 15f; // 20배에서 15배로 줄임
+            driftGauge += chargeRate * Time.deltaTime * 45f; // 15f * 3배 = 45f
             driftGauge = Mathf.Clamp(driftGauge, 0f, maxDriftGauge);
 
             // 게이지가 찰 때마다 알림
@@ -256,8 +290,8 @@ public class scooterCtrl : MonoBehaviour
         }
         else
         {
-            // 드리프트 중이 아닐 때: 게이지 천천히 감소 (매우 느리게)
-            driftGauge -= 2f * Time.deltaTime; // 8에서 2로 변경 (4배 느려짐)
+            // 드리프트 중이 아닐 때: 게이지 천천히 감소 (3배 느리게)
+            driftGauge -= (2f / 3f) * Time.deltaTime; // 기존 2f에서 3배 느리게
             driftGauge = Mathf.Max(0f, driftGauge);
         }
     }
@@ -285,8 +319,11 @@ public class scooterCtrl : MonoBehaviour
     {
         isBoosting = true;
 
+        // 부스트 중에는 현재 설정된 maxSpeed의 2배로 최고속도 적용
+        maxSpeed *= 2f;
+
         // 게이지에 따른 부스터 파워 계산 (25% ~ 100%)
-        currentBoostPower = Mathf.Clamp01(driftGauge / maxBoostGauge);
+        currentBoostPower = Mathf.Clamp01(driftGauge / maxDriftGauge);
         usedBoostGauge = driftGauge; // 사용할 게이지 저장
 
         // 부스터 지속 시간도 게이지에 따라 조절
@@ -314,6 +351,8 @@ public class scooterCtrl : MonoBehaviour
     void EndBoost()
     {
         isBoosting = false;
+        // 부스트가 끝나면 최고속도를 원래 값(32)로 복구
+        maxSpeed = 32f;
         Debug.Log("⏰ 부스터 종료!");
 
         // 부스터 이펙트 비활성화
@@ -377,11 +416,7 @@ public class scooterCtrl : MonoBehaviour
 
         // 속도 정보
         float displayMaxSpeed = maxSpeed;
-        if (isBoosting)
-        {
-            float boostSpeedBonus = (boostSpeed - maxSpeed) * currentBoostPower;
-            displayMaxSpeed = maxSpeed + boostSpeedBonus;
-        }
+        // 부스트 중에는 실제 최고속도(maxSpeed)가 32보다 높을 수 있으므로 그대로 표시
         GUI.Label(new Rect(20, 35, 200, 20),
             $"속도: {currentSpeed:F1} / {displayMaxSpeed:F1} km/h", labelStyle);
 
