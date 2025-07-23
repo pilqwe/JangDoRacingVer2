@@ -418,6 +418,12 @@ public class scooterCtrl : MonoBehaviour
         isBoosting = false;
         // 부스트가 끝나면 최고속도를 원래 값(32)로 복구
         maxSpeed = 32f;
+        // 현재 속도가 maxSpeed보다 높으면 자연스럽게 감속
+        if (currentSpeed > maxSpeed)
+        {
+            // 감속을 부드럽게 하기 위해 Lerp 사용
+            currentSpeed = Mathf.Lerp(currentSpeed, maxSpeed, 0.2f);
+        }
         Debug.Log("⏰ 부스터 종료!");
 
         // 부스터 이펙트 비활성화

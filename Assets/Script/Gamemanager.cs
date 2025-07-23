@@ -58,10 +58,17 @@ public class RacingGameManager : MonoBehaviour
         restartButton.onClick.AddListener(OnRestartButton);
         resumeButton.onClick.AddListener(OnResumeButton);
         pauseRestartButton.onClick.AddListener(OnRestartButton);
+
         foreach (var bot in bots)
             bot.enabled = false;
-        // 플레이어는 항상 활성화
-        // ESC 키 일시정지는 Update에서 처리
+
+        // 플레이어는 항상 보이게 하고, 움직임만 비활성화
+        // player.SetActive(true); // 비활성화 코드 삭제
+
+        // 대신, 스쿠터 움직임을 막으려면 scooterCtrl 컴포넌트 비활성화
+        if (player.TryGetComponent<scooterCtrl>(out var scooter))
+            scooter.enabled = false;
+
         lapTimes.Clear();
         lapStartTime = Time.time;
     }
@@ -107,7 +114,11 @@ public class RacingGameManager : MonoBehaviour
         splineAnimator.Play(); // 스플라인 애니메이션 시작
         raceStarted = true;
         currentLap = 1;
-        player.SetActive(true);
+
+        // Go!가 나온 뒤에 스쿠터 움직임 활성화
+        if (player.TryGetComponent<scooterCtrl>(out var scooter))
+            scooter.enabled = true;
+
         foreach (var bot in bots)
             bot.enabled = true;
         // 필요시 플레이어/봇 위치 초기화

@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
+
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
@@ -40,6 +41,8 @@ public class UIManager : MonoBehaviour
         {
             Debug.Log($"[UIManager] totalTimeText 조건 미충족: raceStarted={raceStarted}, totalTimeText null? {totalTimeText == null}");
         }
+
+
     }
 
     public void StartRaceTimer()
