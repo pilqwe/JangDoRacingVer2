@@ -66,5 +66,5 @@
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj"
     },
-    "dotnet.defaultSolution": "racingV2.sln"
+    "dotnet.defaultSolution": "JEBAL.sln"
 }
