@@ -9115,63 +9115,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3.609024, y: 1.5504113, z: 2.9234314}
   m_Center: {x: -76.45738, y: 0.9177547, z: -216.3194}
---- !u!1001 &2117622287
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -25.12
-      objectReference: {fileID: 0}
-    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 4.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 14.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5937881978786547854, guid: c128171693a7bdf43b30b072197a2954, type: 3}
-      propertyPath: m_Name
-      value: StrawberryMochi
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: c128171693a7bdf43b30b072197a2954, type: 3}
 --- !u!1 &2130785683
 GameObject:
   m_ObjectHideFlags: 0
@@ -10610,6 +10553,7 @@ MonoBehaviour:
   driftForce: 15
   driftGaugeRate: 1
   maxDriftGauge: 100
+  driftEffects: []
   boostSpeed: 25
   boostDuration: 4
   minBoostGauge: 25
@@ -11969,4 +11913,3 @@ SceneRoots:
   - {fileID: 1955874143}
   - {fileID: 2130785686}
   - {fileID: 338305006}
-  - {fileID: 2117622287}
