@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using TMPro;
 using UnityEngine.Splines;
+using System.Collections.Generic;
 
 
 public class RacingGameManager : MonoBehaviour
@@ -27,6 +28,17 @@ public class RacingGameManager : MonoBehaviour
     private bool raceStarted = false;
     private bool isPaused = false;
 
+    private List<float> lapTimes = new List<float>();
+    private float lapStartTime = 0f;
+    private bool lapStarted = false; // 랩 타이머 시작 여부
+
+    public static RacingGameManager Instance; // 싱글톤
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
     void Update()
     {
         // ESC 키로 일시정지
@@ -50,6 +62,8 @@ public class RacingGameManager : MonoBehaviour
             bot.enabled = false;
         // 플레이어는 항상 활성화
         // ESC 키 일시정지는 Update에서 처리
+        lapTimes.Clear();
+        lapStartTime = Time.time;
     }
 
     void OnStartButton()
@@ -89,6 +103,7 @@ public class RacingGameManager : MonoBehaviour
 
     void StartRace()
     {
+        UIManager.Instance.StartRaceTimer();
         splineAnimator.Play(); // 스플라인 애니메이션 시작
         raceStarted = true;
         currentLap = 1;
@@ -98,13 +113,39 @@ public class RacingGameManager : MonoBehaviour
         // 필요시 플레이어/봇 위치 초기화
     }
 
-    public void OnLapCompleted()
+    // 랩 트리거에서 호출
+    public void OnLapTrigger()
     {
+        if (!lapStarted)
+        {
+            // 첫 랩 트리거 통과 시 타이머 시작 (Lap 1)
+            lapStarted = true;
+            lapStartTime = Time.time;
+            currentLap = 1;
+            UIManager.Instance.UpdateLapUI(currentLap, totalLaps);
+            return;
+        }
+
+        // 이후부터 랩 타임 기록
+        float lapTime = Time.time - lapStartTime;
+        lapTimes.Add(lapTime);
+        lapStartTime = Time.time;
+
         currentLap++;
         if (currentLap > totalLaps)
         {
             EndRace();
         }
+        else
+        {
+            UIManager.Instance.UpdateLapUI(currentLap, totalLaps);
+            UIManager.Instance.UpdateLapTimeList(lapTimes);
+        }
+    }
+
+    public List<float> GetLapTimes()
+    {
+        return lapTimes;
     }
 
     void EndRace()

@@ -264,32 +264,32 @@ public class scooterCtrl : MonoBehaviour
             driftDirection = transform.right * Mathf.Sign(steerInput);
 
             Debug.Log("🏎️ 드리프트 시작!");
-            
+
             // 드리프트 이펙트 활성화 (디버그 추가)
             Debug.Log($"🎯 드리프트 이펙트 디버그 시작:");
             Debug.Log($"   - driftEffects == null? {driftEffects == null}");
-            
+
             if (driftEffects != null && driftEffects.Length > 0)
             {
                 Debug.Log($"   - 배열 길이: {driftEffects.Length}");
-                
+
                 for (int i = 0; i < driftEffects.Length; i++)
                 {
                     Debug.Log($"🔍 드리프트 이펙트 [{i}] 확인:");
-                    
+
                     if (driftEffects[i] != null)
                     {
                         Debug.Log($"   ✅ 이펙트 이름: {driftEffects[i].name}");
                         Debug.Log($"   - GameObject 활성화: {driftEffects[i].gameObject.activeInHierarchy}");
                         Debug.Log($"   - ParticleSystem 활성화: {driftEffects[i].gameObject.activeSelf}");
                         Debug.Log($"   - 현재 재생중: {driftEffects[i].isPlaying}");
-                        
+
                         // 파티클 재생
                         driftEffects[i].Play();
-                        
+
                         // 재생 후 상태 확인
                         Debug.Log($"   - Play() 호출 후 재생중: {driftEffects[i].isPlaying}");
-                        
+
                         if (!driftEffects[i].isPlaying)
                         {
                             Debug.LogError($"❌ 드리프트 이펙트 [{i}] 재생 실패!");
@@ -322,7 +322,7 @@ public class scooterCtrl : MonoBehaviour
             if (isDrifting)
             {
                 Debug.Log("🏁 드리프트 종료!");
-                
+
                 // 드리프트 이펙트 비활성화
                 if (driftEffects != null && driftEffects.Length > 0)
                 {
@@ -463,8 +463,12 @@ public class scooterCtrl : MonoBehaviour
     public float CurrentSpeed => currentSpeed;
     public bool IsGrounded => isGrounded;
     public bool IsBraking => isBraking;
+    public float DriftGauge => driftGauge;
+    public float MaxDriftGauge => maxDriftGauge;
 
     // 디버그 UI 표시
+    // 아래 OnGUI 함수 전체를 삭제하면 됩니다.
+    /*
     void OnGUI()
     {
         // 스타일 설정
@@ -493,15 +497,15 @@ public class scooterCtrl : MonoBehaviour
         Rect gaugeRect = new Rect(20, 75, 200, 10);
         GUI.Box(gaugeRect, "");
 
-        // 게이지 채우기 (25% 이상에서 색상 변경)
+        // 게이지 채우기
         float gaugeFill = driftGauge / maxDriftGauge;
         Color gaugeColor;
         if (gaugeFill >= 1f)
-            gaugeColor = Color.yellow;      // 100%: 노란색
+            gaugeColor = Color.yellow;
         else if (gaugeFill >= 0.25f)
-            gaugeColor = Color.green;       // 25% 이상: 초록색
+            gaugeColor = Color.green;
         else
-            gaugeColor = Color.cyan;        // 25% 미만: 청록색
+            gaugeColor = Color.cyan;
 
         GUI.color = gaugeColor;
         GUI.Box(new Rect(gaugeRect.x, gaugeRect.y, gaugeRect.width * gaugeFill, gaugeRect.height), "");
@@ -529,6 +533,7 @@ public class scooterCtrl : MonoBehaviour
         GUI.Label(new Rect(20, 235, 280, 20), "R: 리셋", labelStyle);
         GUI.Label(new Rect(20, 255, 280, 20), "💡 게이지가 많을수록 강한 부스터!", labelStyle);
     }
+    */
 
     // 기즈모로 지면 체크 영역 표시 (에디터에서만)
     void OnDrawGizmosSelected()
