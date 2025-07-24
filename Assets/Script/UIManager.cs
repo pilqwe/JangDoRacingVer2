@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using System.Collections; // 추�임�페�스
+using System.Collections; // 추�임�페�스
 
 
 public class UIManager : MonoBehaviour
@@ -12,8 +12,10 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI speedText;
     public Slider boostGaugeSlider;
     public TextMeshProUGUI lapText;
-    public TextMeshProUGUI lapTimeText; // �별 기록 �시    public TextMeshProUGUI totalTimeText; // �시간체 �간 �시(Inspector�서 �결)
-    public GameObject inkPanel; // 먹물 UI �브�트
+    public TextMeshProUGUI lapTimeText; // �별 기록 �시    public TextMeshProUGUI totalTimeText; // �시간체 �간 �시(Inspector�서 �결)
+    public GameObject inkPanel; // 먹물 UI �브�트
+
+    public TextMeshProUGUI totalTimeText;
 
     private float raceStartTime = 0f;
     private bool raceStarted = false;
@@ -31,7 +33,7 @@ public class UIManager : MonoBehaviour
         if (scooter != null && boostGaugeSlider != null)
             boostGaugeSlider.value = scooter.DriftGauge / scooter.MaxDriftGauge;
 
-        // �시간체 �간 �시
+        // �시간체 �간 �시
         if (raceStarted && totalTimeText != null)
         {
             float elapsed = Time.time - raceStartTime;
@@ -53,14 +55,14 @@ public class UIManager : MonoBehaviour
             lapText.text = $"LAP {currentLap} / {totalLap}";
     }
 
-    // F1 ��기록 �시
+    // F1 ��기록 �시
     public void UpdateLapTimeList(List<float> lapTimes)
     {
         if (lapTimeText == null) return;
 
         if (lapTimes.Count == 0)
         {
-            lapTimeText.text = "Lap 기록 �음";
+            lapTimeText.text = "Lap 기록 �음";
             return;
         }
 
@@ -91,14 +93,14 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator InkEffectFadeRoutine(float duration)
     {
-        // CanvasGroup 컴포�트가 �으멐동 추�
+        // CanvasGroup 컴포�트가 �으멐동 추�
         CanvasGroup cg = inkPanel.GetComponent<CanvasGroup>();
         if (cg == null)
             cg = inkPanel.AddComponent<CanvasGroup>();
 
         inkPanel.SetActive(true);
 
-        // �이(0 1)
+        // �이(0 1)
         float fadeInTime = 0.5f;
         float t = 0f;
         while (t < fadeInTime)
@@ -109,10 +111,10 @@ public class UIManager : MonoBehaviour
         }
         cg.alpha = 1f;
 
-        // 먹물 ��
+        // 먹물 ��
         yield return new WaitForSeconds(duration);
 
-        // �이�웃 (1 0)
+        // �이�웃 (1 0)
         float fadeOutTime = 0.5f;
         t = 0f;
         while (t < fadeOutTime)
