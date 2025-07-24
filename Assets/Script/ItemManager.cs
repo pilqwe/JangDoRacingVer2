@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections; // ← 추가
+using System.Collections;
 
 public class ItemManager : MonoBehaviour
 {
@@ -8,12 +8,34 @@ public class ItemManager : MonoBehaviour
     public ItemType itemType = ItemType.Boost;
     [Header("먹물 효과 지속 시간 (초)")]
     public float inkDuration = 3f;
+    [Header("리스폰 시간 (초)")]
+    public float respawnTime = 5f;
 
-    public GameObject itemPrefab; // Inspector에서 프리팹 연결
+    // 아이템의 시각적 요소들
+    private MeshRenderer[] meshRenderers;
+    private Collider itemCollider;
+    private bool isRespawning = false;
+
+    private void Start()
+    {
+        // 시각적 요소들을 찾아서 저장
+        meshRenderers = GetComponentsInChildren<MeshRenderer>();
+        itemCollider = GetComponent<Collider>();
+        
+        if (itemCollider == null)
+        {
+            Debug.LogError($"[ItemManager] {gameObject.name}에 Collider가 없습니다!");
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
+        // 이미 리스폰 중이면 무시
+        if (isRespawning) return;
+        
         if (!other.CompareTag("Player")) return;
+
+        Debug.Log($"[ItemManager] 플레이어가 {itemType} 아이템 획득!");
 
         switch (itemType)
         {
@@ -23,37 +45,87 @@ public class ItemManager : MonoBehaviour
                 if (scooter != null)
                 {
                     scooter.SetBoostGaugeToMax();
+                    Debug.Log("[ItemManager] 부스트 게이지가 최대로 충전되었습니다!");
+                }
+                
+                // 🎵 부스트 아이템 사운드 재생
+                if (SoundManager.Instance != null)
+                {
+                    SoundManager.Instance.PlayBoostItemSound();
                 }
                 break;
+                
             case ItemType.Ink:
                 // 먹물 효과 호출
                 var uiManager = FindFirstObjectByType<UIManager>();
                 if (uiManager != null)
                 {
                     uiManager.ShowInkEffect(inkDuration);
+                    Debug.Log("[ItemManager] 먹물 효과가 적용되었습니다!");
+                }
+                
+                // 🎵 먹물 아이템 사운드 재생
+                if (SoundManager.Instance != null)
+                {
+                    SoundManager.Instance.PlayInkItemSound();
                 }
                 break;
         }
-        Debug.Log($"[ItemManager] 아이템 먹음! {itemType} {gameObject.name} 위치: {transform.position}");
-        StartCoroutine(RespawnItemCoroutine());
+        
+        // 🎵 일반 아이템 획득 사운드 재생
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayItemPickupSound();
+        }
+        
+        // 아이템 숨기기 및 리스폰 시작
+        StartCoroutine(RespawnCoroutine());
     }
 
-    // 10초 뒤에 같은 위치에 리스폰
-    private IEnumerator RespawnItemCoroutine()
+    private IEnumerator RespawnCoroutine()
     {
-        Vector3 respawnPosition = transform.position;
-        Quaternion respawnRotation = transform.rotation;
+        isRespawning = true;
+        
+        // 아이템 숨기기 (MeshRenderer와 Collider 비활성화)
+        HideItem();
+        Debug.Log($"[ItemManager] {gameObject.name} 아이템 숨김 완료");
+        
+        // 리스폰 시간 대기
+        yield return new WaitForSeconds(respawnTime);
+        
+        // 아이템 다시 보이기
+        ShowItem();
+        Debug.Log($"[ItemManager] {gameObject.name} 아이템 리스폰 완료! 위치: {transform.position}");
+        
+        isRespawning = false;
+    }
 
-        Debug.Log($"[ItemManager] 아이템 비활성화: {gameObject.name} 위치: {respawnPosition}");
-        gameObject.SetActive(false);
-        yield return new WaitForSeconds(5f);
+    private void HideItem()
+    {
+        // 모든 MeshRenderer 비활성화
+        foreach (var renderer in meshRenderers)
+        {
+            if (renderer != null)
+                renderer.enabled = false;
+        }
+        
+        // Collider 비활성화
+        if (itemCollider != null)
+            itemCollider.enabled = false;
+    }
 
-        Debug.Log($"[ItemManager] 아이템 리스폰 시도: {gameObject.name} 위치: {respawnPosition}");
-        GameObject newItem = Instantiate(itemPrefab, respawnPosition, respawnRotation);
-        newItem.SetActive(true);
-        Debug.Log($"[ItemManager] 아이템 리스폰 완료: {newItem.name} 위치: {respawnPosition}");
-
-        Destroy(gameObject);
+    private void ShowItem()
+    {
+        // 모든 MeshRenderer 활성화
+        foreach (var renderer in meshRenderers)
+        {
+            if (renderer != null)
+                renderer.enabled = true;
+        }
+        
+        // Collider 활성화
+        if (itemCollider != null)
+            itemCollider.enabled = true;
     }
 
     void Update()

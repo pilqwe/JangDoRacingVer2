@@ -5,6 +5,17 @@ public class SplineBotController : MonoBehaviour
     public Transform[] splinePoints; // 스플라인 경로 포인트들
     public float moveSpeed = 10f;
     private int currentPoint = 0;
+    
+    // 🆕 초기 위치와 회전 저장용
+    private Vector3 initialPosition;
+    private Quaternion initialRotation;
+
+    void Start()
+    {
+        // 🆕 초기 위치와 회전 저장
+        initialPosition = transform.position;
+        initialRotation = transform.rotation;
+    }
 
     void Update()
     {
@@ -33,5 +44,22 @@ public class SplineBotController : MonoBehaviour
                 // 랩 체크는 GameManager에 알리기
             }
         }
+    }
+
+    /// <summary>
+    /// 🆕 봇을 초기 상태로 리셋
+    /// </summary>
+    public void ResetToInitialState()
+    {
+        Debug.Log($"🤖 {gameObject.name} 봇 초기 상태로 리셋!");
+        
+        // 위치와 회전 초기화
+        transform.position = initialPosition;
+        transform.rotation = initialRotation;
+        
+        // 스플라인 진행도 초기화
+        currentPoint = 0;
+        
+        Debug.Log($"✅ {gameObject.name} 봇 리셋 완료! 위치: {transform.position}");
     }
 }

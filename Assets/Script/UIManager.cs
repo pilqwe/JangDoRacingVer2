@@ -34,7 +34,7 @@ public class UIManager : MonoBehaviour
             speedText.text = $"{scooter.CurrentSpeed:F1} km/h";
 
         if (scooter != null && boostGaugeSlider != null)
-            boostGaugeSlider.value = scooter.DriftGauge / scooter.MaxDriftGauge;
+            boostGaugeSlider.value = scooter.CurrentDriftGauge / scooter.MaxDriftGauge;
 
         // 총 시간체 시간 표시
         if (raceStarted && totalTimeText != null)
@@ -123,6 +123,12 @@ public class UIManager : MonoBehaviour
         if (raceCompletePanel != null)
         {
             raceCompletePanel.SetActive(true);
+        }
+
+        // 🎵 레이스 완료 사운드 재생
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayRaceCompleteSound();
         }
 
         Debug.Log("🏆 레이스 완주 텍스트 표시!");
