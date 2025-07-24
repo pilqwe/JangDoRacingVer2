@@ -57,34 +57,74 @@ public class RacingGameManager : MonoBehaviour
 
     void Start()
     {
-        // �� 게임 �작 배경곜작 �널 모두 �시
+        // 🆕 게임 시작 시 배경과 시작 패널 모두 표시
         if (startBackgroundPanel != null)
             startBackgroundPanel.SetActive(true);
         
-        startPanel.SetActive(true);
-        countdownText.gameObject.SetActive(false);
-        restartPanel.SetActive(false);
-        pausePanel.SetActive(false);
-        
-        // 버튼 �벤�결
-        startButton.onClick.AddListener(OnStartButton);
-        restartButton.onClick.AddListener(OnRestartButton);
-        resumeButton.onClick.AddListener(OnResumeButton);
-        pauseRestartButton.onClick.AddListener(OnRestartButton);
-        
-        // 봇들 비활�화
-        foreach (var bot in bots)
-            bot.enabled = false;
+        if (startPanel != null)
+            startPanel.SetActive(true);
+        else
+            Debug.LogWarning("⚠️ startPanel이 Inspector에서 할당되지 않았습니다!");
             
-        // �� 카메컨트롤러 �동 찾기 (Inspector�서 �당�� �� 경우)
+        if (countdownText != null)
+            countdownText.gameObject.SetActive(false);
+        else
+            Debug.LogWarning("⚠️ countdownText가 Inspector에서 할당되지 않았습니다!");
+            
+        if (restartPanel != null)
+            restartPanel.SetActive(false);
+        else
+            Debug.LogWarning("⚠️ restartPanel이 Inspector에서 할당되지 않았습니다!");
+            
+        if (pausePanel != null)
+            pausePanel.SetActive(false);
+        else
+            Debug.LogWarning("⚠️ pausePanel이 Inspector에서 할당되지 않았습니다!");
+        
+        // 버튼 이벤트 연결 (null 체크 추가)
+        if (startButton != null)
+            startButton.onClick.AddListener(OnStartButton);
+        else
+            Debug.LogWarning("⚠️ startButton이 Inspector에서 할당되지 않았습니다!");
+            
+        if (restartButton != null)
+            restartButton.onClick.AddListener(OnRestartButton);
+        else
+            Debug.LogWarning("⚠️ restartButton이 Inspector에서 할당되지 않았습니다!");
+            
+        if (resumeButton != null)
+            resumeButton.onClick.AddListener(OnResumeButton);
+        else
+            Debug.LogWarning("⚠️ resumeButton이 Inspector에서 할당되지 않았습니다!");
+            
+        if (pauseRestartButton != null)
+            pauseRestartButton.onClick.AddListener(OnRestartButton);
+        else
+            Debug.LogWarning("⚠️ pauseRestartButton이 Inspector에서 할당되지 않았습니다!");
+        
+        // 봇들 비활성화 (null 체크 추가)
+        if (bots != null)
+        {
+            foreach (var bot in bots)
+            {
+                if (bot != null)
+                    bot.enabled = false;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ bots 배열이 Inspector에서 할당되지 않았습니다!");
+        }
+            
+        // 🆕 카메라 컨트롤러 자동 찾기 (Inspector에서 할당하지 않은 경우)
         if (cameraController == null)
             cameraController = FindObjectOfType<CarCameraController>();
             
-        // 초기
+        // 초기화
         lapTimes.Clear();
         lapStartTime = Time.time;
         
-        Debug.Log("�� 게임 �작 �면 준비료!");
+        Debug.Log("🎮 게임 시작 화면 준비 완료!");
     }
 
     public void OnStartButton()
@@ -153,74 +193,123 @@ public class RacingGameManager : MonoBehaviour
     }
     
     /// <summary>
-    /// �� 게임 직접 �작 (기존 로직)
+    /// 🆕 게임 직접 시작 (기존 로직)
     /// </summary>
     void StartGameDirect()
     {
-        Debug.Log("�� 게임 직접 �작!");
+        Debug.Log("🎮 게임 직접 시작!");
         
-        startPanel.SetActive(false);
+        if (startPanel != null)
+            startPanel.SetActive(false);
         
-        // �� 카메무빙카운�다�에 먼� �작
+        // 🆕 카메라무빙과 카운트다운에 먼저 시작
         if (cameraController != null)
         {
-            // �� 커스� 카메무빙�는 경우 �료 카운�다�작
+            // 🆕 커스텀 카메라무빙이 있는 경우 완료 후 카운트다운 시작
             if (cameraController.useCustomCameraMoving && cameraController.cameraWaypoints != null && cameraController.cameraWaypoints.Length > 0)
             {
-                // 카메무빙 �료 �벤�에 카운�다�작 �결
+                // 카메라무빙 완료 이벤트에 카운트다운 시작 연결
                 cameraController.OnCustomCameraMovingComplete = OnCustomCameraMovingComplete;
                 cameraController.StartGameCamera();
-                Debug.Log("�� 커스� 카메무빙 �작! �료 카운�다�정");
+                Debug.Log("🎬 커스텀 카메라무빙 시작! 완료 후 카운트다운 예정");
             }
             else
             {
-                // 기본 카메�인 경우 바로 카운�다�작
+                // 기본 카메라인 경우 바로 카운트다운 시작
                 cameraController.StartGameCamera();
                 StartCoroutine(StartCountdown());
-                Debug.Log("�� 기본 카메무빙 �작 + 카운�다�작!");
+                Debug.Log("📹 기본 카메라무빙 시작 + 카운트다운 시작!");
             }
         }
         else
         {
-            Debug.LogWarning("�️ 카메컨트롤러가 null�니");
+            Debug.LogWarning("⚠️ 카메라컨트롤러가 null입니다!");
             StartCoroutine(StartCountdown());
         }
     }
     
     /// <summary>
-    /// �� 커스� 카메무빙 �료 �출�는 콜백
+    /// 🆕 커스텀 카메라무빙 완료 후 호출되는 콜백
     /// </summary>
     void OnCustomCameraMovingComplete()
     {
-        Debug.Log("�� 커스� 카메무빙 �료! �제 카운�다�작");
+        Debug.Log("🎬 커스텀 카메라무빙 완료! 이제 카운트다운 시작");
         StartCoroutine(StartCountdown());
     }
 
     IEnumerator StartCountdown()
     {
+        Debug.Log("🔥 StartCountdown 시작!");
+        
+        // countdownText null 체크
+        if (countdownText == null)
+        {
+            Debug.LogError("❌ countdownText가 null입니다! Inspector에서 할당해주세요.");
+            yield break;
+        }
+        
         countdownText.gameObject.SetActive(true);
-        // 모든 라이트 꺼두기
-        foreach (var light in startLights)
-            light.enabled = false;
+        Debug.Log("✅ countdownText 활성화됨");
+        
+        // 🔍 UI 상태 상세 디버깅
+        Debug.Log($"🔍 countdownText 오브젝트 이름: {countdownText.gameObject.name}");
+        Debug.Log($"🔍 countdownText 위치: {countdownText.transform.position}");
+        Debug.Log($"🔍 countdownText 활성 상태: {countdownText.gameObject.activeInHierarchy}");
+        Debug.Log($"🔍 countdownText 색상: {countdownText.color}");
+        Debug.Log($"🔍 countdownText 폰트 크기: {countdownText.fontSize}");
+        Debug.Log($"🔍 countdownText Canvas: {countdownText.canvas?.name ?? "null"}");
+        
+        // Canvas 상태 확인
+        Canvas parentCanvas = countdownText.GetComponentInParent<Canvas>();
+        if (parentCanvas != null)
+        {
+            Debug.Log($"🔍 부모 Canvas: {parentCanvas.name}, 활성 상태: {parentCanvas.gameObject.activeInHierarchy}");
+            Debug.Log($"🔍 Canvas Render Mode: {parentCanvas.renderMode}");
+        }
+        else
+        {
+            Debug.LogError("❌ countdownText가 Canvas 하위에 없습니다!");
+        }
+        
+        // 모든 라이트 꺼두기 (null 체크 추가)
+        if (startLights != null)
+        {
+            foreach (var light in startLights)
+            {
+                if (light != null)
+                    light.enabled = false;
+            }
+        }
 
         string[] counts = { "3", "2", "1", "Go!" };
         for (int i = 0; i < counts.Length; i++)
         {
             countdownText.text = counts[i];
-            Debug.Log($"카운트다운: {counts[i]}");
+            Debug.Log($"🔢 카운트다운: {counts[i]} (텍스트 설정됨)");
+            
+            // 🔍 텍스트 설정 후 상태 확인
+            Debug.Log($"🔍 현재 텍스트: '{countdownText.text}'");
+            Debug.Log($"🔍 텍스트 색상 알파값: {countdownText.color.a}");
+            Debug.Log($"🔍 오브젝트 활성 상태: {countdownText.gameObject.activeInHierarchy}");
 
             // 3,2,1에 맞춰 라이트 켜기
-            if (i < startLights.Length)
+            if (startLights != null && i < startLights.Length && startLights[i] != null)
                 startLights[i].enabled = true;
 
             yield return new WaitForSeconds(1f);
         }
         countdownText.gameObject.SetActive(false);
-        Debug.Log("카운트다운 텍스트 비활성화됨");
+        Debug.Log("✅ 카운트다운 텍스트 비활성화됨");
 
         // 모든 라이트 끄기 (혹은 Go!에 맞춰 연출)
-        foreach (var light in startLights)
-            light.enabled = false;
+        if (startLights != null)
+        {
+            foreach (var light in startLights)
+            {
+                if (light != null)
+                    light.enabled = false;
+            }
+        }
 
         StartRace();
     }
