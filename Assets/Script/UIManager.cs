@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using System.Collections; // 추가된 네임스페이스
+using System.Collections; // 추�임�페�스
 
 
 public class UIManager : MonoBehaviour
@@ -12,9 +12,8 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI speedText;
     public Slider boostGaugeSlider;
     public TextMeshProUGUI lapText;
-    public TextMeshProUGUI lapTimeText; // 랩별 기록 표시용
-    public TextMeshProUGUI totalTimeText; // 실시간 전체 시간 표시용 (Inspector에서 연결)
-    public GameObject inkPanel; // 먹물 UI 오브젝트
+    public TextMeshProUGUI lapTimeText; // �별 기록 �시    public TextMeshProUGUI totalTimeText; // �시간체 �간 �시(Inspector�서 �결)
+    public GameObject inkPanel; // 먹물 UI �브�트
 
     private float raceStartTime = 0f;
     private bool raceStarted = false;
@@ -32,7 +31,7 @@ public class UIManager : MonoBehaviour
         if (scooter != null && boostGaugeSlider != null)
             boostGaugeSlider.value = scooter.DriftGauge / scooter.MaxDriftGauge;
 
-        // 실시간 전체 시간 표시
+        // �시간체 �간 �시
         if (raceStarted && totalTimeText != null)
         {
             float elapsed = Time.time - raceStartTime;
@@ -54,14 +53,14 @@ public class UIManager : MonoBehaviour
             lapText.text = $"LAP {currentLap} / {totalLap}";
     }
 
-    // F1 스타일 랩 타임 기록 표시
+    // F1 ��기록 �시
     public void UpdateLapTimeList(List<float> lapTimes)
     {
         if (lapTimeText == null) return;
 
         if (lapTimes.Count == 0)
         {
-            lapTimeText.text = "Lap 기록 없음";
+            lapTimeText.text = "Lap 기록 �음";
             return;
         }
 
@@ -77,10 +76,10 @@ public class UIManager : MonoBehaviour
                 bestTime = lapTimes[i];
                 bestLap = i;
             }
-            result += $"Lap {i + 1}: {timeStr}\n";
+            result += $"LAP {i + 1}: {timeStr}\n";
         }
 
-        result += $"\nBest Lap {bestLap + 1} - {bestTime:00.000} sec";
+        //result += $"\nBest Lap {bestLap + 1} - {bestTime:00.000} sec";
         lapTimeText.text = result;
     }
 
@@ -92,14 +91,14 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator InkEffectFadeRoutine(float duration)
     {
-        // CanvasGroup 컴포넌트가 없으면 자동 추가
+        // CanvasGroup 컴포�트가 �으멐동 추�
         CanvasGroup cg = inkPanel.GetComponent<CanvasGroup>();
         if (cg == null)
             cg = inkPanel.AddComponent<CanvasGroup>();
 
         inkPanel.SetActive(true);
 
-        // 페이드 인 (0 → 1)
+        // �이(0 1)
         float fadeInTime = 0.5f;
         float t = 0f;
         while (t < fadeInTime)
@@ -110,10 +109,10 @@ public class UIManager : MonoBehaviour
         }
         cg.alpha = 1f;
 
-        // 먹물 유지
+        // 먹물 ��
         yield return new WaitForSeconds(duration);
 
-        // 페이드 아웃 (1 → 0)
+        // �이�웃 (1 0)
         float fadeOutTime = 0.5f;
         t = 0f;
         while (t < fadeOutTime)
