@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections; // ← 추가
 
 public class ItemManager : MonoBehaviour
 {
@@ -7,6 +8,8 @@ public class ItemManager : MonoBehaviour
     public ItemType itemType = ItemType.Boost;
     [Header("먹물 효과 지속 시간 (초)")]
     public float inkDuration = 3f;
+
+    public GameObject itemPrefab; // Inspector에서 프리팹 연결
 
     private void OnTriggerEnter(Collider other)
     {
@@ -31,6 +34,25 @@ public class ItemManager : MonoBehaviour
                 }
                 break;
         }
+        Debug.Log($"[ItemManager] 아이템 먹음! {itemType} {gameObject.name} 위치: {transform.position}");
+        StartCoroutine(RespawnItemCoroutine());
+    }
+
+    // 10초 뒤에 같은 위치에 리스폰
+    private IEnumerator RespawnItemCoroutine()
+    {
+        Vector3 respawnPosition = transform.position;
+        Quaternion respawnRotation = transform.rotation;
+
+        Debug.Log($"[ItemManager] 아이템 비활성화: {gameObject.name} 위치: {respawnPosition}");
+        gameObject.SetActive(false);
+        yield return new WaitForSeconds(5f);
+
+        Debug.Log($"[ItemManager] 아이템 리스폰 시도: {gameObject.name} 위치: {respawnPosition}");
+        GameObject newItem = Instantiate(itemPrefab, respawnPosition, respawnRotation);
+        newItem.SetActive(true);
+        Debug.Log($"[ItemManager] 아이템 리스폰 완료: {newItem.name} 위치: {respawnPosition}");
+
         Destroy(gameObject);
     }
 
