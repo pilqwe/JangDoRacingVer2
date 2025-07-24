@@ -55,7 +55,7 @@ public class CarCameraController : MonoBehaviour
     public float customMovingDuration = 8f;         // 시간 기반일 때 사용 (useConstantSpeed가 false일 때)
     public AnimationCurve movingCurve = AnimationCurve.EaseInOut(0, 0, 1, 1); // 이동 곡선
     public bool lookAtPlayerDuringMoving = false;   // 🆕 무빙 중 플레이어를 바라볼지 여부 (기본값 false로 변경)
-    
+
     [Header("🎬 카메라 무빙 부드러움 설정")]
     public float positionSmoothness = 10f;          // 🆕 위치 이동 부드러움 (높을수록 부드러움)
     public float customRotationSmoothness = 8f;     // 🆕 커스텀 무빙 회전 부드러움 (높을수록 부드러움)
@@ -77,7 +77,7 @@ public class CarCameraController : MonoBehaviour
     private Vector3 initialCameraPosition;  // 🆕 초기 카메라 위치
     private bool isCustomMoving = false;    // 🆕 커스텀 무빙 중인지 여부
     private Coroutine customMovingCoroutine; // 🆕 커스텀 무빙 코루틴
-    
+
     // 🆕 카메라 무빙 완료 이벤트
     public System.Action OnCustomCameraMovingComplete;
 
@@ -95,7 +95,7 @@ public class CarCameraController : MonoBehaviour
     {
         cameraComponent = GetComponent<Camera>();
         originalFOV = cameraComponent.fieldOfView;
-        
+
         // 🆕 초기 카메라 위치 저장
         initialCameraPosition = transform.position;
 
@@ -114,7 +114,7 @@ public class CarCameraController : MonoBehaviour
         {
             Debug.LogWarning("Car Transform이 설정되지 않았습니다!");
         }
-        
+
         // 🆕 게임 시작 전에는 카메라 무빙 비활성화
         isGameStarted = false;
         Debug.Log("📹 카메라 대기 중... 게임 시작을 기다립니다.");
@@ -122,11 +122,18 @@ public class CarCameraController : MonoBehaviour
 
     void LateUpdate()
     {
+        // 커스텀 무빙 중 P키로 스킵 (가장 먼저 체크)
+        if (isCustomMoving && Input.GetKeyDown(KeyCode.P))
+        {
+            SkipCustomCameraMoving();
+            return;
+        }
+
         // 🆕 게임이 시작되지 않았거나 차량이 없으면 카메라 무빙 중단
         if (carTransform == null || !isGameStarted) return;
 
         // 🆕 커스텀 무빙 중이면 일반 카메라 업데이트 완전 차단
-        if (isCustomMoving) 
+        if (isCustomMoving)
         {
             // 커스텀 무빙 중에는 아무것도 실행하지 않음 (완전 차단)
             return;
@@ -138,14 +145,14 @@ public class CarCameraController : MonoBehaviour
         UpdateFieldOfView();
         AutoSwitchCamera();
     }
-    
+
     /// <summary>
     /// 🚀 게임 시작 시 카메라 무빙 활성화
     /// </summary>
     public void StartGameCamera()
     {
         isGameStarted = true;
-        
+
         // 🔍 디버깅 정보 출력
         Debug.Log($"🔍 카메라 설정 확인:");
         Debug.Log($"  - useCustomCameraMoving: {useCustomCameraMoving}");
@@ -153,7 +160,7 @@ public class CarCameraController : MonoBehaviour
         Debug.Log($"  - customMovingSpeed: {customMovingSpeed} units/sec");
         Debug.Log($"  - lookAtPlayerDuringMoving: {lookAtPlayerDuringMoving}");
         Debug.Log($"  - cameraWaypoints 길이: {(cameraWaypoints != null ? cameraWaypoints.Length : 0)}");
-        
+
         // 🆕 커스텀 카메라 무빙 사용 여부 확인
         if (useCustomCameraMoving && cameraWaypoints != null && cameraWaypoints.Length > 0)
         {
@@ -168,7 +175,7 @@ public class CarCameraController : MonoBehaviour
             Debug.Log("📹 기본 카메라 무빙 시작!");
         }
     }
-    
+
     /// <summary>
     /// 🎬 커스텀 카메라 무빙 코루틴 (속도 기반 개선)
     /// </summary>
@@ -177,10 +184,10 @@ public class CarCameraController : MonoBehaviour
         isCustomMoving = true;
         float elapsedTime = 0f;
         float totalDuration;
-        
+
         Debug.Log($"🎬 커스텀 카메라 무빙 시작! 경로 포인트: {cameraWaypoints.Length}개");
         Debug.Log($"🔍 lookAtPlayerDuringMoving 설정: {lookAtPlayerDuringMoving}");
-        
+
         // 🆕 속도 기반 vs 시간 기반 선택
         if (useConstantSpeed)
         {
@@ -193,16 +200,16 @@ public class CarCameraController : MonoBehaviour
             totalDuration = customMovingDuration;
             Debug.Log($"⏰ 시간 기반 모드: 총 {totalDuration}초");
         }
-        
+
         // 🆕 시작 위치와 회전 저장
         Vector3 startPosition = transform.position;
         Quaternion startRotation = transform.rotation;
-        
+
         while (elapsedTime < totalDuration)
         {
             elapsedTime += Time.deltaTime;
             float progress = elapsedTime / totalDuration;
-            
+
             // 🆕 일정 속도일 때는 선형 progress, 시간 기반일 때는 곡선 적용
             float smoothProgress;
             if (useConstantSpeed)
@@ -213,11 +220,11 @@ public class CarCameraController : MonoBehaviour
             {
                 smoothProgress = easeInOutCurve.Evaluate(progress); // 곡선 적용
             }
-            
+
             // 🆕 목표 위치와 회전 계산
             Vector3 targetPosition = GetPositionAlongPath(smoothProgress);
             Quaternion targetRotation = GetRotationAlongPath(smoothProgress);
-            
+
             // 🆕 부드러운 위치 이동
             if (useConstantSpeed)
             {
@@ -227,49 +234,49 @@ public class CarCameraController : MonoBehaviour
             else
             {
                 // 시간 기반일 때는 부드러운 보간
-                transform.position = Vector3.Slerp(transform.position, targetPosition, 
+                transform.position = Vector3.Slerp(transform.position, targetPosition,
                     positionSmoothness * Time.deltaTime);
             }
-            
+
             // 🆕 부드러운 회전
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation,
                 customRotationSmoothness * Time.deltaTime);
-            
+
             // 🛑 플레이어 추적 완전 차단 로그 (5초마다 한 번씩)
             if (Time.frameCount % 300 == 0) // 5초마다 한 번씩 로그
             {
                 Debug.Log($"🎬 카메라 무빙 중... 진행률: {progress:F2}, 위치: {transform.position}");
             }
-            
+
             yield return null;
         }
-        
+
         // 🆕 마지막 위치와 회전을 정확히 설정
         if (cameraWaypoints.Length > 0)
         {
             transform.position = cameraWaypoints[cameraWaypoints.Length - 1].position;
             transform.rotation = cameraWaypoints[cameraWaypoints.Length - 1].rotation;
         }
-        
+
         // 커스텀 무빙 완료 후 일반 카메라 모드로 전환
         isCustomMoving = false;
         SetCameraMode(CameraMode.ThirdPerson);
-        
+
         Debug.Log("✨ 커스텀 카메라 무빙 완료! 일반 카메라 모드로 전환");
-        
+
         // 🆕 카메라 무빙 완료 이벤트 호출
         OnCustomCameraMovingComplete?.Invoke();
     }
-    
+
     /// <summary>
     /// 🆕 전체 경로 길이 계산
     /// </summary>
     float CalculateTotalPathLength()
     {
         if (cameraWaypoints == null || cameraWaypoints.Length < 2) return 0f;
-        
+
         float totalLength = 0f;
-        
+
         for (int i = 0; i < cameraWaypoints.Length - 1; i++)
         {
             if (cameraWaypoints[i] != null && cameraWaypoints[i + 1] != null)
@@ -277,10 +284,10 @@ public class CarCameraController : MonoBehaviour
                 totalLength += Vector3.Distance(cameraWaypoints[i].position, cameraWaypoints[i + 1].position);
             }
         }
-        
+
         return totalLength;
     }
-    
+
     /// <summary>
     /// 🛤️ 경로를 따라 위치 계산 (부드러움 개선)
     /// </summary>
@@ -288,33 +295,33 @@ public class CarCameraController : MonoBehaviour
     {
         if (cameraWaypoints.Length == 0) return transform.position;
         if (cameraWaypoints.Length == 1) return cameraWaypoints[0].position;
-        
+
         // 전체 경로를 progress(0~1)에 따라 계산
         float scaledProgress = progress * (cameraWaypoints.Length - 1);
         int index = Mathf.FloorToInt(scaledProgress);
         float localProgress = scaledProgress - index;
-        
+
         // 마지막 인덱스 처리
         if (index >= cameraWaypoints.Length - 1)
         {
             return cameraWaypoints[cameraWaypoints.Length - 1].position;
         }
-        
+
         // 🆕 3개 이상 포인트가 있을 때 스플라인 보간 사용
         if (cameraWaypoints.Length >= 3)
         {
             return CalculateCatmullRomSpline(index, localProgress);
         }
-        
+
         // 2개 포인트일 때는 기본 선형 보간
         Vector3 startPos = cameraWaypoints[index].position;
         Vector3 endPos = cameraWaypoints[index + 1].position;
-        
+
         // 🆕 SmoothStep을 사용하여 더 부드러운 보간
         float smoothT = Mathf.SmoothStep(0f, 1f, localProgress);
         return Vector3.Lerp(startPos, endPos, smoothT);
     }
-    
+
     /// <summary>
     /// 🆕 Catmull-Rom 스플라인을 사용한 부드러운 경로 계산
     /// </summary>
@@ -325,21 +332,21 @@ public class CarCameraController : MonoBehaviour
         Vector3 p1 = cameraWaypoints[index].position;
         Vector3 p2 = cameraWaypoints[Mathf.Min(cameraWaypoints.Length - 1, index + 1)].position;
         Vector3 p3 = cameraWaypoints[Mathf.Min(cameraWaypoints.Length - 1, index + 2)].position;
-        
+
         // Catmull-Rom 스플라인 계산
         float t2 = t * t;
         float t3 = t2 * t;
-        
+
         Vector3 result = 0.5f * (
             (2f * p1) +
             (-p0 + p2) * t +
             (2f * p0 - 5f * p1 + 4f * p2 - p3) * t2 +
             (-p0 + 3f * p1 - 3f * p2 + p3) * t3
         );
-        
+
         return result;
     }
-    
+
     /// <summary>
     /// 🆕 경로를 따라 회전 계산 (부드러움 개선)
     /// </summary>
@@ -347,43 +354,43 @@ public class CarCameraController : MonoBehaviour
     {
         if (cameraWaypoints.Length == 0) return transform.rotation;
         if (cameraWaypoints.Length == 1) return cameraWaypoints[0].rotation;
-        
+
         // 전체 경로를 progress(0~1)에 따라 계산
         float scaledProgress = progress * (cameraWaypoints.Length - 1);
         int index = Mathf.FloorToInt(scaledProgress);
         float localProgress = scaledProgress - index;
-        
+
         // 마지막 인덱스 처리
         if (index >= cameraWaypoints.Length - 1)
         {
             return cameraWaypoints[cameraWaypoints.Length - 1].rotation;
         }
-        
+
         // 두 포인트 사이를 구면 보간 (더 부드럽게)
         Quaternion startRot = cameraWaypoints[index].rotation;
         Quaternion endRot = cameraWaypoints[index + 1].rotation;
-        
+
         // 🆕 SmoothStep을 사용하여 더 부드러운 회전 보간
         float smoothT = Mathf.SmoothStep(0f, 1f, localProgress);
         return Quaternion.Slerp(startRot, endRot, smoothT);
     }
-    
+
     /// <summary>
     /// 🛑 게임 종료 시 카메라 무빙 비활성화
     /// </summary>
     public void StopGameCamera()
     {
         isGameStarted = false;
-        
+
         // 🆕 커스텀 무빙 중단
         if (customMovingCoroutine != null)
         {
             StopCoroutine(customMovingCoroutine);
             customMovingCoroutine = null;
         }
-        
+
         isCustomMoving = false;
-        
+
         Debug.Log("📹 게임 종료! 카메라 무빙 비활성화!");
     }
 
@@ -667,12 +674,12 @@ public class CarCameraController : MonoBehaviour
         Vector3 topViewPos = carTransform.position + topViewOffset;
         Gizmos.DrawWireSphere(topViewPos, 1f);
         Gizmos.DrawLine(carTransform.position, topViewPos);
-        
+
         // 🆕 커스텀 카메라 경로 표시 (부드러운 곡선으로 개선)
         if (useCustomCameraMoving && cameraWaypoints != null && cameraWaypoints.Length > 0)
         {
             Gizmos.color = Color.green;
-            
+
             // 경로 포인트들 표시
             for (int i = 0; i < cameraWaypoints.Length; i++)
             {
@@ -681,35 +688,35 @@ public class CarCameraController : MonoBehaviour
                     // 포인트 크기를 인덱스에 따라 다르게 (시작점이 더 크게)
                     float sphereSize = (i == 0) ? 1.2f : (i == cameraWaypoints.Length - 1) ? 1.0f : 0.8f;
                     Gizmos.DrawWireSphere(cameraWaypoints[i].position, sphereSize);
-                    
+
                     // 포인트 번호 표시를 위한 색상 변경
                     if (i == 0) Gizmos.color = Color.cyan; // 시작점
                     else if (i == cameraWaypoints.Length - 1) Gizmos.color = Color.red; // 끝점
                     else Gizmos.color = Color.green; // 중간점
-                    
+
                     Gizmos.DrawWireSphere(cameraWaypoints[i].position, sphereSize);
                     Gizmos.color = Color.green;
                 }
             }
-            
+
             // 🆕 부드러운 곡선 경로 표시 (여러 구간으로 나누어 표시)
             if (cameraWaypoints.Length >= 2)
             {
                 Gizmos.color = Color.yellow;
                 int pathResolution = 50; // 경로 해상도
-                
+
                 for (int i = 0; i < pathResolution; i++)
                 {
                     float t1 = (float)i / pathResolution;
                     float t2 = (float)(i + 1) / pathResolution;
-                    
+
                     Vector3 point1 = GetPositionAlongPath(t1);
                     Vector3 point2 = GetPositionAlongPath(t2);
-                    
+
                     Gizmos.DrawLine(point1, point2);
                 }
             }
-            
+
             // 플레이어로의 시선 표시 (중요 포인트에만)
             if (lookAtPlayerDuringMoving && carTransform != null)
             {
@@ -723,5 +730,21 @@ public class CarCameraController : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void SkipCustomCameraMoving()
+    {
+        if (customMovingCoroutine != null)
+        {
+            StopCoroutine(customMovingCoroutine);
+            customMovingCoroutine = null;
+        }
+        isCustomMoving = false;
+        SetCameraMode(CameraMode.ThirdPerson);
+
+        // 이벤트 콜백도 호출 (게임 시작 등)
+        OnCustomCameraMovingComplete?.Invoke();
+
+        Debug.Log("✨ 커스텀 카메라 무빙 스킵됨! 일반 카메라 모드로 전환");
     }
 }

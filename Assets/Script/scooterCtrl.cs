@@ -547,4 +547,9 @@ public class scooterCtrl : MonoBehaviour
         Gizmos.color = isGrounded ? Color.green : Color.red;
         Gizmos.DrawRay(transform.position, Vector3.down * groundCheckDistance);
     }
+
+    public void SetBoostGaugeToMax()
+    {
+        driftGauge = maxBoostGauge; // 또는 driftGauge = maxDriftGauge;
+    }
 }

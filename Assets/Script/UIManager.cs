@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Collections; // 추가된 네임스페이스
 
 
 public class UIManager : MonoBehaviour
@@ -13,6 +14,7 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI lapText;
     public TextMeshProUGUI lapTimeText; // 랩별 기록 표시용
     public TextMeshProUGUI totalTimeText; // 실시간 전체 시간 표시용 (Inspector에서 연결)
+    public GameObject inkPanel; // 먹물 UI 오브젝트
 
     private float raceStartTime = 0f;
     private bool raceStarted = false;
@@ -35,11 +37,6 @@ public class UIManager : MonoBehaviour
         {
             float elapsed = Time.time - raceStartTime;
             totalTimeText.text = $"Total Time: {elapsed:00.000} sec";
-            Debug.Log($"[UIManager] totalTimeText 업데이트: {totalTimeText.text}, raceStarted={raceStarted}, raceStartTime={raceStartTime}");
-        }
-        else
-        {
-            Debug.Log($"[UIManager] totalTimeText 조건 미충족: raceStarted={raceStarted}, totalTimeText null? {totalTimeText == null}");
         }
 
 
@@ -54,7 +51,7 @@ public class UIManager : MonoBehaviour
     public void UpdateLapUI(int currentLap, int totalLap)
     {
         if (lapText != null)
-            lapText.text = $"Lap {currentLap} / {totalLap}";
+            lapText.text = $"LAP {currentLap} / {totalLap}";
     }
 
     // F1 스타일 랩 타임 기록 표시
@@ -83,7 +80,49 @@ public class UIManager : MonoBehaviour
             result += $"Lap {i + 1}: {timeStr}\n";
         }
 
-        result += $"\nBest Lap: Lap {bestLap + 1} - {bestTime:00.000} sec";
+        result += $"\nBest Lap {bestLap + 1} - {bestTime:00.000} sec";
         lapTimeText.text = result;
+    }
+
+    public void ShowInkEffect(float duration)
+    {
+        if (inkPanel != null)
+            StartCoroutine(InkEffectFadeRoutine(duration));
+    }
+
+    private IEnumerator InkEffectFadeRoutine(float duration)
+    {
+        // CanvasGroup 컴포넌트가 없으면 자동 추가
+        CanvasGroup cg = inkPanel.GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = inkPanel.AddComponent<CanvasGroup>();
+
+        inkPanel.SetActive(true);
+
+        // 페이드 인 (0 → 1)
+        float fadeInTime = 0.5f;
+        float t = 0f;
+        while (t < fadeInTime)
+        {
+            t += Time.deltaTime;
+            cg.alpha = Mathf.Lerp(0f, 1f, t / fadeInTime);
+            yield return null;
+        }
+        cg.alpha = 1f;
+
+        // 먹물 유지
+        yield return new WaitForSeconds(duration);
+
+        // 페이드 아웃 (1 → 0)
+        float fadeOutTime = 0.5f;
+        t = 0f;
+        while (t < fadeOutTime)
+        {
+            t += Time.deltaTime;
+            cg.alpha = Mathf.Lerp(1f, 0f, t / fadeOutTime);
+            yield return null;
+        }
+        cg.alpha = 0f;
+        inkPanel.SetActive(false);
     }
 }

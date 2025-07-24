@@ -8,19 +8,19 @@ using System.Collections.Generic;
 
 public class RacingGameManager : MonoBehaviour
 {
-    [Header("게임 �작 UI")]
-    public GameObject startBackgroundPanel;  // �� 게임 �작 배경 �널
-    public GameObject startPanel;            // �작 버튼 UI �널
-    public Button startButton;               // �작 버튼
-    
+    [Header("게임 시작 UI")]
+    public GameObject startBackgroundPanel;  // 🆕 게임 시작 배경 패널
+    public GameObject startPanel;            // 시작 버튼 UI 패널
+    public Button startButton;               // 시작 버튼
+
     [Header("게임 진행 UI")]
-    public GameObject restartPanel;          // �시버튼 UI �널
-    public Button restartButton;             // �시버튼
-    public GameObject pausePanel;            // �시�� �널 (계속/�시버튼 �함)
+    public GameObject restartPanel;          // 재시작버튼 UI 패널
+    public Button restartButton;             // 재시작버튼
+    public GameObject pausePanel;            // 일시정지 패널 (계속/재시작버튼 포함)
     public Button resumeButton;              // 계속 버튼
-    public Button pauseRestartButton;        // �시�� �시버튼
-    public TMPro.TextMeshProUGUI countdownText; // 카운�다�스(TextMeshPro)
-    
+    public Button pauseRestartButton;        // 일시정지 재시작버튼
+    public TMPro.TextMeshProUGUI countdownText; // 카운트다운텍스트(TextMeshPro)
+
     [Header("게임 오브젝트")]
     public GameObject player;                // 플레이어 오브젝트
     public SplineBotController[] bots;       // 여러 봇을 Inspector에서 연결
@@ -29,8 +29,8 @@ public class RacingGameManager : MonoBehaviour
     public SplineAnimate splineAnimator;     // 스플라인 애니메이터 (Inspector에서 연결)
     public CarCameraController cameraController; // 🆕 카메라 컨트롤러
 
-    [Header("배경 �환 �과")]
-    public float backgroundFadeOutTime = 1.0f; // 배경 �라지�간
+    [Header("배경 전환 효과")]
+    public float backgroundFadeOutTime = 1.0f; // 배경 페이드지속시간
 
     private int currentLap = 0;
     private bool raceStarted = false;
@@ -38,9 +38,9 @@ public class RacingGameManager : MonoBehaviour
 
     private List<float> lapTimes = new List<float>();
     private float lapStartTime = 0f;
-    private bool lapStarted = false; // ��머 �작 ��
+    private bool lapStarted = false; // 타이머 시작 여부
 
-    public static RacingGameManager Instance; // ��
+    public static RacingGameManager Instance; // 싱글톤
     void Awake()
     {
         Instance = this;
@@ -48,7 +48,7 @@ public class RacingGameManager : MonoBehaviour
 
     void Update()
     {
-        // ESC �로 �시��
+        // ESC키로 일시정지
         if (raceStarted && !isPaused && Input.GetKeyDown(KeyCode.Escape))
         {
             PauseGame();
@@ -60,48 +60,48 @@ public class RacingGameManager : MonoBehaviour
         // 🆕 게임 시작 시 배경과 시작 패널 모두 표시
         if (startBackgroundPanel != null)
             startBackgroundPanel.SetActive(true);
-        
+
         if (startPanel != null)
             startPanel.SetActive(true);
         else
             Debug.LogWarning("⚠️ startPanel이 Inspector에서 할당되지 않았습니다!");
-            
+
         if (countdownText != null)
             countdownText.gameObject.SetActive(false);
         else
             Debug.LogWarning("⚠️ countdownText가 Inspector에서 할당되지 않았습니다!");
-            
+
         if (restartPanel != null)
             restartPanel.SetActive(false);
         else
             Debug.LogWarning("⚠️ restartPanel이 Inspector에서 할당되지 않았습니다!");
-            
+
         if (pausePanel != null)
             pausePanel.SetActive(false);
         else
             Debug.LogWarning("⚠️ pausePanel이 Inspector에서 할당되지 않았습니다!");
-        
+
         // 버튼 이벤트 연결 (null 체크 추가)
         if (startButton != null)
             startButton.onClick.AddListener(OnStartButton);
         else
             Debug.LogWarning("⚠️ startButton이 Inspector에서 할당되지 않았습니다!");
-            
+
         if (restartButton != null)
             restartButton.onClick.AddListener(OnRestartButton);
         else
             Debug.LogWarning("⚠️ restartButton이 Inspector에서 할당되지 않았습니다!");
-            
+
         if (resumeButton != null)
             resumeButton.onClick.AddListener(OnResumeButton);
         else
             Debug.LogWarning("⚠️ resumeButton이 Inspector에서 할당되지 않았습니다!");
-            
+
         if (pauseRestartButton != null)
             pauseRestartButton.onClick.AddListener(OnRestartButton);
         else
             Debug.LogWarning("⚠️ pauseRestartButton이 Inspector에서 할당되지 않았습니다!");
-        
+
         // 봇들 비활성화 (null 체크 추가)
         if (bots != null)
         {
@@ -115,93 +115,131 @@ public class RacingGameManager : MonoBehaviour
         {
             Debug.LogWarning("⚠️ bots 배열이 Inspector에서 할당되지 않았습니다!");
         }
-            
+
         // 🆕 카메라 컨트롤러 자동 찾기 (Inspector에서 할당하지 않은 경우)
         if (cameraController == null)
             cameraController = FindObjectOfType<CarCameraController>();
-            
+
+        // 🆕 스쿠터 움직임 비활성화
+        if (player != null && player.TryGetComponent<scooterCtrl>(out var scooter))
+            scooter.enabled = false;
+
         // 초기화
         lapTimes.Clear();
         lapStartTime = Time.time;
-        
+
         Debug.Log("🎮 게임 시작 화면 준비 완료!");
     }
 
     public void OnStartButton()
     {
-        Debug.Log(" �작 버튼 �릭");
-        
+        Debug.Log("🎯 시작 버튼 클릭");
+
         if (startBackgroundPanel != null)
         {
-            // 배경�을 경우 �이�웃 게임 �작
+            // 배경패널이 있을 경우 페이드아웃 후 게임 시작
             StartCoroutine(StartGameSequence());
         }
         else
         {
-            // 배경�을 경우 바로 게임 �작
+            // 배경패널이 없을 경우 바로 게임 시작
             StartGameDirect();
         }
     }
-    
+
     /// <summary>
-    /// �� 배경 �이�웃골께 게임 �작 �퀀    /// </summary>
+    /// 🆕 배경 페이드아웃과 함께 게임 시작 시퀀스
+    /// </summary>
     IEnumerator StartGameSequence()
     {
-        Debug.Log("�� 게임 �작 �퀀�작!");
-        
-        // 배경 �이�웃
+        Debug.Log("🎬 게임 시작 시퀀스 시작!");
+
+        // 배경 페이드아웃
         yield return StartCoroutine(FadeOutBackground());
-        
-        // 게임 직접 �작
+
+        // 게임 직접 시작
         StartGameDirect();
     }
-    
+
     /// <summary>
-    /// �� 배경 �널 �이�웃 코루    /// </summary>
+    /// 🆕 배경 패널 페이드아웃 코루틴
+    /// </summary>
     IEnumerator FadeOutBackground()
     {
-        Debug.Log("���배경 �이�웃 �작!");
-        
+        Debug.Log("🎭 배경 페이드아웃 시작!");
+
         CanvasGroup backgroundCanvasGroup = startBackgroundPanel.GetComponent<CanvasGroup>();
-        
-        // CanvasGroup�으�추�
+
+        // CanvasGroup이 없으면 추가
         if (backgroundCanvasGroup == null)
         {
             backgroundCanvasGroup = startBackgroundPanel.AddComponent<CanvasGroup>();
-            Debug.Log("�� CanvasGroup 컴포�트 �동 추�");
+            Debug.Log("🆕 CanvasGroup 컴포넌트 자동 추가");
         }
-        
+
+        // 🆕 스타트 패널도 동시에 페이드아웃 준비
+        CanvasGroup startPanelCanvasGroup = null;
+        if (startPanel != null)
+        {
+            startPanelCanvasGroup = startPanel.GetComponent<CanvasGroup>();
+            if (startPanelCanvasGroup == null)
+            {
+                startPanelCanvasGroup = startPanel.AddComponent<CanvasGroup>();
+                Debug.Log("🆕 스타트패널 CanvasGroup 컴포넌트 자동 추가");
+            }
+        }
+
         float elapsedTime = 0f;
         float startAlpha = backgroundCanvasGroup.alpha;
-        
+        float startPanelStartAlpha = startPanelCanvasGroup?.alpha ?? 1f;
+
         while (elapsedTime < backgroundFadeOutTime)
         {
             elapsedTime += Time.deltaTime;
             float progress = elapsedTime / backgroundFadeOutTime;
-            
-            // 부�러�이�웃
+
+            // 배경 부드러운 페이드아웃
             backgroundCanvasGroup.alpha = Mathf.Lerp(startAlpha, 0f, progress);
-            
+
+            // 🆕 스타트 패널도 동시에 페이드아웃
+            if (startPanelCanvasGroup != null)
+            {
+                startPanelCanvasGroup.alpha = Mathf.Lerp(startPanelStartAlpha, 0f, progress);
+            }
+
             yield return null;
         }
-        
-        // �전�명�게 �고 비활�화
+
+        // 완전히 투명하게 만들고 비활성화
         backgroundCanvasGroup.alpha = 0f;
         startBackgroundPanel.SetActive(false);
-        
-        Debug.Log("배경 �이�웃 �료!");
+
+        // 🆕 스타트 패널도 동시에 비활성화
+        if (startPanel != null)
+        {
+            if (startPanelCanvasGroup != null)
+                startPanelCanvasGroup.alpha = 0f;
+            startPanel.SetActive(false);
+        }
+
+        Debug.Log("✅ 배경과 스타트 패널 페이드아웃 완료!");
     }
-    
+
     /// <summary>
     /// 🆕 게임 직접 시작 (기존 로직)
     /// </summary>
     void StartGameDirect()
     {
         Debug.Log("🎮 게임 직접 시작!");
-        
-        if (startPanel != null)
+
+        // 🆕 startPanel은 FadeOutBackground에서 이미 처리됨
+        // 배경 페이드가 없는 경우에만 startPanel 비활성화
+        if (startBackgroundPanel == null && startPanel != null)
+        {
             startPanel.SetActive(false);
-        
+            Debug.Log("🔄 배경 페이드 없음 - 스타트 패널 직접 비활성화");
+        }
+
         // 🆕 카메라무빙과 카운트다운에 먼저 시작
         if (cameraController != null)
         {
@@ -227,7 +265,7 @@ public class RacingGameManager : MonoBehaviour
             StartCoroutine(StartCountdown());
         }
     }
-    
+
     /// <summary>
     /// 🆕 커스텀 카메라무빙 완료 후 호출되는 콜백
     /// </summary>
@@ -240,17 +278,17 @@ public class RacingGameManager : MonoBehaviour
     IEnumerator StartCountdown()
     {
         Debug.Log("🔥 StartCountdown 시작!");
-        
+
         // countdownText null 체크
         if (countdownText == null)
         {
             Debug.LogError("❌ countdownText가 null입니다! Inspector에서 할당해주세요.");
             yield break;
         }
-        
+
         countdownText.gameObject.SetActive(true);
         Debug.Log("✅ countdownText 활성화됨");
-        
+
         // 🔍 UI 상태 상세 디버깅
         Debug.Log($"🔍 countdownText 오브젝트 이름: {countdownText.gameObject.name}");
         Debug.Log($"🔍 countdownText 위치: {countdownText.transform.position}");
@@ -258,7 +296,7 @@ public class RacingGameManager : MonoBehaviour
         Debug.Log($"🔍 countdownText 색상: {countdownText.color}");
         Debug.Log($"🔍 countdownText 폰트 크기: {countdownText.fontSize}");
         Debug.Log($"🔍 countdownText Canvas: {countdownText.canvas?.name ?? "null"}");
-        
+
         // Canvas 상태 확인
         Canvas parentCanvas = countdownText.GetComponentInParent<Canvas>();
         if (parentCanvas != null)
@@ -270,7 +308,7 @@ public class RacingGameManager : MonoBehaviour
         {
             Debug.LogError("❌ countdownText가 Canvas 하위에 없습니다!");
         }
-        
+
         // 모든 라이트 꺼두기 (null 체크 추가)
         if (startLights != null)
         {
@@ -286,7 +324,7 @@ public class RacingGameManager : MonoBehaviour
         {
             countdownText.text = counts[i];
             Debug.Log($"🔢 카운트다운: {counts[i]} (텍스트 설정됨)");
-            
+
             // 🔍 텍스트 설정 후 상태 확인
             Debug.Log($"🔍 현재 텍스트: '{countdownText.text}'");
             Debug.Log($"🔍 텍스트 색상 알파값: {countdownText.color.a}");
@@ -316,27 +354,27 @@ public class RacingGameManager : MonoBehaviour
 
     void StartRace()
     {
-        // UIManager 존재 �인
+        // UIManager 존재 확인
         if (UIManager.Instance != null)
         {
             UIManager.Instance.StartRaceTimer();
         }
         else
         {
-            Debug.LogWarning("�️ UIManager.Instance가 null�니");
+            Debug.LogWarning("⚠️ UIManager.Instance가 null입니다!");
         }
-        
+
         // 스플라인 애니메이터 시작
         if (splineAnimator != null)
         {
-            splineAnimator.Play(); 
+            splineAnimator.Play();
             Debug.Log("🎯 스플라인 애니메이션 시작!");
         }
         else
         {
             Debug.LogWarning("⚠️ splineAnimator가 null입니다!");
         }
-        
+
         raceStarted = true;
         currentLap = 1;
 
@@ -346,7 +384,7 @@ public class RacingGameManager : MonoBehaviour
 
         foreach (var bot in bots)
             bot.enabled = true;
-            
+
         Debug.Log("🚀 레이스 시작 완료!");
     }
 
@@ -388,18 +426,18 @@ public class RacingGameManager : MonoBehaviour
     void EndRace()
     {
         raceStarted = false;
-        
-        // �� 카메무빙 중단
+
+        // 🆕 카메라무빙 중단
         if (cameraController != null)
         {
             cameraController.StopGameCamera();
-            Debug.Log("�� 카메무빙 중단!");
+            Debug.Log("🎬 카메라무빙 중단!");
         }
-        
+
         foreach (var bot in bots)
             bot.enabled = false;
-            
-        Debug.Log("�이종료!");
+
+        Debug.Log("🏁 레이스종료!");
         restartPanel.SetActive(true);
     }
 
