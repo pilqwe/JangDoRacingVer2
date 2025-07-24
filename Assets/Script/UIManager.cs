@@ -54,7 +54,7 @@ public class UIManager : MonoBehaviour
     public void UpdateLapUI(int currentLap, int totalLap)
     {
         if (lapText != null)
-            lapText.text = $"Lap {currentLap} / {totalLap}";
+            lapText.text = $"LAP {currentLap} / {totalLap}";
     }
 
     // F1 스타일 랩 타임 기록 표시
@@ -80,10 +80,10 @@ public class UIManager : MonoBehaviour
                 bestTime = lapTimes[i];
                 bestLap = i;
             }
-            result += $"Lap {i + 1}: {timeStr}\n";
+            result += $"LAP {i + 1}: {timeStr}\n";
         }
 
-        result += $"\nBest Lap: Lap {bestLap + 1} - {bestTime:00.000} sec";
+        //result += $"\nBest Lap {bestLap + 1} - {bestTime:00.000} sec";
         lapTimeText.text = result;
     }
 }
