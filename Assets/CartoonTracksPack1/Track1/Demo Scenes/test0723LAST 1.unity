@@ -355,7 +355,8 @@ Transform:
   m_LocalPosition: {x: 27.282257, y: 74.33, z: -55.89949}
   m_LocalScale: {x: 2.24, y: 2.24, z: 2.24}
   m_ConstrainProportionsScale: 1
-  m_Children: []
+  m_Children:
+  - {fileID: 1813916803}
   m_Father: {fileID: 1136760528}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &9845658
@@ -24663,7 +24664,12 @@ MonoBehaviour:
   lapText: {fileID: 715468468}
   lapTimeText: {fileID: 989303350}
   inkPanel: {fileID: 1450926382}
+<<<<<<< HEAD
   totalTimeText: {fileID: 2002951254}
+=======
+  raceCompleteText: {fileID: 0}
+  raceCompletePanel: {fileID: 0}
+>>>>>>> origin/hyun
 --- !u!4 &1183234767
 Transform:
   m_ObjectHideFlags: 0
@@ -31172,6 +31178,80 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1801663605}
   m_Mesh: {fileID: -3210104460535108278, guid: 333e06d4dc9d98d4fa9a4fd354fbc9fd, type: 3}
+--- !u!1001 &1813916802
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 9845657}
+    m_Modifications:
+    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -25.43611
+      objectReference: {fileID: 0}
+    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -4.7245574
+      objectReference: {fileID: 0}
+    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 40.227608
+      objectReference: {fileID: 0}
+    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.99829704
+      objectReference: {fileID: 0}
+    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.058335863
+      objectReference: {fileID: 0}
+    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 6.689
+      objectReference: {fileID: 0}
+    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5937881978786547854, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+      propertyPath: m_Name
+      value: StrawberryMochi
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+--- !u!4 &1813916803 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1413837859239672490, guid: c128171693a7bdf43b30b072197a2954, type: 3}
+  m_PrefabInstance: {fileID: 1813916802}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1815198473
 GameObject:
   m_ObjectHideFlags: 0

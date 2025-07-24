@@ -4,6 +4,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine.Splines;
 using System.Collections.Generic;
+using System.Linq; // 🆕 Sum() 메서드를 위해 추가
 
 
 public class RacingGameManager : MonoBehaviour
@@ -427,6 +428,12 @@ public class RacingGameManager : MonoBehaviour
     {
         raceStarted = false;
 
+        // 🆕 UIManager 타이머 중단
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.StopRaceTimer();
+        }
+
         // 🆕 카메라무빙 중단
         if (cameraController != null)
         {
@@ -434,11 +441,32 @@ public class RacingGameManager : MonoBehaviour
             Debug.Log("🎬 카메라무빙 중단!");
         }
 
+        // 봇들 비활성화
         foreach (var bot in bots)
             bot.enabled = false;
 
+        // 🆕 완주 텍스트 표시
+        if (UIManager.Instance != null)
+        {
+            // 총 레이스 시간 = 모든 랩 타임의 합
+            float totalRaceTime = lapTimes.Sum();
+            UIManager.Instance.ShowRaceComplete(totalRaceTime, lapTimes);
+        }
+
         Debug.Log("🏁 레이스종료!");
-        restartPanel.SetActive(true);
+        
+        // 잠깐 기다린 후 재시작 패널 표시 (완주 텍스트를 먼저 볼 수 있게)
+        StartCoroutine(ShowRestartPanelDelayed());
+    }
+
+    /// <summary>
+    /// 🆕 완주 텍스트 표시 후 재시작 패널을 지연 표시
+    /// </summary>
+    IEnumerator ShowRestartPanelDelayed()
+    {
+        yield return new WaitForSeconds(3f); // 3초 후 재시작 패널 표시
+        if (restartPanel != null)
+            restartPanel.SetActive(true);
     }
 
     void OnRestartButton()
