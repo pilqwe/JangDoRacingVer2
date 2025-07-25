@@ -198,12 +198,12 @@ public class SoundManager : MonoBehaviour
     {
         if (isEngineRunning && engineSoundSource != null)
         {
-            engineSoundSource.pitch = Mathf.Lerp(0.8f, 2.0f, speedRatio);
-            engineSoundSource.volume = Mathf.Lerp(0.3f, 0.8f, speedRatio) * sfxVolume * masterVolume;
+            engineSoundSource.pitch = Mathf.Lerp(0.4f, 1.6f, speedRatio);
+            engineSoundSource.volume = Mathf.Lerp(0.1f, 0.5f, speedRatio) * sfxVolume * masterVolume;
         }
     }
 
-    // 부스터 사운드 시작
+    // 부스터 사운드 시작   
     public void StartBoosterSound()
     {
         if (!isBoosting && boosterSoundSource != null)

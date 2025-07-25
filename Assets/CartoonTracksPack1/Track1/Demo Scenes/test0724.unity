@@ -517,8 +517,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 58, y: 59, z: 43.12}
+  m_Center: {x: -8.3, y: 3.99, z: 0.87}
 --- !u!23 &12055288
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -10613,8 +10613,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 51.1, y: 57.48, z: 39.92}
+  m_Center: {x: 0, y: 0, z: -10.04}
 --- !u!23 &341676838
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -27349,8 +27349,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 51, y: 57, z: 40}
+  m_Center: {x: -9.62, y: 0, z: 11.36}
 --- !u!23 &1290988940
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -27435,6 +27435,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1301527303}
   - component: {fileID: 1301527304}
+  - component: {fileID: 1301527305}
   m_Layer: 0
   m_Name: SoundManager
   m_TagString: Untagged
@@ -27474,7 +27475,7 @@ MonoBehaviour:
   countdownSoundSource: {fileID: 0}
   countdownSound: {fileID: 8300000, guid: 4978dcb34e30a13488d59c87d7ac1279, type: 3}
   goSound: {fileID: 8300000, guid: 56c7ad2bedbbf3a4cbb0173ec0e9d740, type: 3}
-  engineSoundSource: {fileID: 0}
+  engineSoundSource: {fileID: 1301527305}
   engineIdleSound: {fileID: 0}
   engineRunningSound: {fileID: 8300000, guid: e9643d8581d235f45a62997cba851988, type: 3}
   boosterSoundSource: {fileID: 0}
@@ -27495,6 +27496,103 @@ MonoBehaviour:
   masterVolume: 0.7
   musicVolume: 1
   sfxVolume: 0.826
+--- !u!82 &1301527305
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1301527301}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: e9643d8581d235f45a62997cba851988, type: 3}
+  m_Resource: {fileID: 8300000, guid: e9643d8581d235f45a62997cba851988, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 0.686
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!65 &1314061724
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -29626,8 +29724,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 54.7, y: 57.8, z: -41.57}
+  m_Center: {x: -4.38, y: 0.95, z: 7.11}
 --- !u!23 &1568877722
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -47014,7 +47112,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0674083fc8f9916478fdc8505070dcb4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -379.3168
+      value: -218.8
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0674083fc8f9916478fdc8505070dcb4, type: 3}
       propertyPath: m_LocalPosition.y
@@ -47022,7 +47120,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0674083fc8f9916478fdc8505070dcb4, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -139.60255
+      value: -134.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0674083fc8f9916478fdc8505070dcb4, type: 3}
       propertyPath: m_LocalRotation.w
@@ -49761,6 +49859,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1136760528}
     m_Modifications:
+    - target: {fileID: 606428443620906778, guid: ed620608573062f46b3848782693ac53, type: 3}
+      propertyPath: m_Size.x
+      value: 51.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 606428443620906778, guid: ed620608573062f46b3848782693ac53, type: 3}
+      propertyPath: m_Size.y
+      value: 54.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 606428443620906778, guid: ed620608573062f46b3848782693ac53, type: 3}
+      propertyPath: m_Size.z
+      value: 42.42
+      objectReference: {fileID: 0}
+    - target: {fileID: 606428443620906778, guid: ed620608573062f46b3848782693ac53, type: 3}
+      propertyPath: m_Center.x
+      value: -8.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 606428443620906778, guid: ed620608573062f46b3848782693ac53, type: 3}
+      propertyPath: m_Center.y
+      value: -1.63
+      objectReference: {fileID: 0}
+    - target: {fileID: 606428443620906778, guid: ed620608573062f46b3848782693ac53, type: 3}
+      propertyPath: m_Center.z
+      value: 6.9
+      objectReference: {fileID: 0}
     - target: {fileID: 1782297675805379170, guid: ed620608573062f46b3848782693ac53, type: 3}
       propertyPath: m_Name
       value: crab (4)
